@@ -1,0 +1,744 @@
+
+    "import pandas as pd\n",
+    "import os\n",
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "os.chdir('C:\\\\Users\\\\Administrator\\\\Desktop')\n",
+    "\n",
+    "%matplotlib inline"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1.1 熬夜打游戏数据构造"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>性别</th>\n",
+       "      <th>熬夜原因</th>\n",
+       "      <th>人数</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>男</td>\n",
+       "      <td>打游戏</td>\n",
+       "      <td>57</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>男</td>\n",
+       "      <td>加班</td>\n",
+       "      <td>13</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>男</td>\n",
+       "      <td>看剧</td>\n",
+       "      <td>30</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>女</td>\n",
+       "      <td>打游戏</td>\n",
+       "      <td>33</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>女</td>\n",
+       "      <td>加班</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>女</td>\n",
+       "      <td>看剧</td>\n",
+       "      <td>62</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "  性别 熬夜原因  人数\n",
+       "0  男  打游戏  57\n",
+       "1  男   加班  13\n",
+       "2  男   看剧  30\n",
+       "3  女  打游戏  33\n",
+       "4  女   加班   5\n",
+       "5  女   看剧  62"
+      ]
+     },
+     "execution_count": 64,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df = pd.DataFrame({\n",
+    "    '性别':['男','男','男','女','女','女'],\n",
+    "    '熬夜原因':['打游戏','加班','看剧','打游戏','加班','看剧'],\n",
+    "    '人数':[57,13,30,33,5,62]\n",
+    "})\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1.2 导入需要的库"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pyecharts.charts import Sankey\n",
+    "from pyecharts import options as opts"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1.3 生成节点nodes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[{'name': '男'}, {'name': '女'}, {'name': '打游戏'}, {'name': '加班'}, {'name': '看剧'}]"
+      ]
+     },
+     "execution_count": 66,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "nodes = []\n",
+    "\n",
+    "for i in range(2):\n",
+    "    values = df.iloc[:,i].unique()\n",
+    "    for value in values:\n",
+    "        dic = {}\n",
+    "        dic['name'] = value\n",
+    "        nodes.append(dic)\n",
+    "        \n",
+    "nodes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1.4 生成linkes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[{'source': '男', 'target': '打游戏', 'value': 57},\n",
+       " {'source': '男', 'target': '加班', 'value': 13},\n",
+       " {'source': '男', 'target': '看剧', 'value': 30},\n",
+       " {'source': '女', 'target': '打游戏', 'value': 33},\n",
+       " {'source': '女', 'target': '加班', 'value': 5},\n",
+       " {'source': '女', 'target': '看剧', 'value': 62}]"
+      ]
+     },
+     "execution_count": 67,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "linkes = []\n",
+    "\n",
+    "for i in df.values:\n",
+    "    dic = {}\n",
+    "    dic['source'] = i[0]\n",
+    "    dic['target'] = i[1]\n",
+    "    dic['value'] = i[2]\n",
+    "    linkes.append(dic)\n",
+    "\n",
+    "linkes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1.5 绘制熬夜原因桑基图 "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'C:\\\\Users\\\\Administrator\\\\Desktop\\\\test.html'"
+      ]
+     },
+     "execution_count": 68,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from pyecharts.charts import Sankey\n",
+    "from pyecharts import options as opts\n",
+    "\n",
+    "pic = (\n",
+    "    Sankey()\n",
+    "    .add('', #图例名称\n",
+    "         nodes,    #传入节点数据\n",
+    "         linkes,   #传入边和流量数据\n",
+    "         #设置透明度、弯曲度、颜色\n",
+    "         linestyle_opt=opts.LineStyleOpts(opacity = 0.3, curve = 0.5, color = \"source\"),\n",
+    "         #标签显示位置\n",
+    "         label_opts=opts.LabelOpts(position=\"right\"),\n",
+    "         #节点之前的距离\n",
+    "         node_gap = 30,\n",
+    "    )\n",
+    "    .set_global_opts(title_opts=opts.TitleOpts(title = '熬夜原因桑基图'))\n",
+    ")\n",
+    "\n",
+    "pic.render('test.html')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1.6 改成垂直的"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'C:\\\\Users\\\\Administrator\\\\Desktop\\\\test.html'"
+      ]
+     },
+     "execution_count": 59,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pic = (\n",
+    "    Sankey()\n",
+    "    .add('',\n",
+    "         nodes,\n",
+    "         linkes,\n",
+    "         linestyle_opt=opts.LineStyleOpts(opacity = 0.3, curve = 0.5, color = \"source\"),\n",
+    "         label_opts=opts.LabelOpts(position=\"top\"),\n",
+    "         node_gap = 30,\n",
+    "         orient=\"vertical\",  #更改的是这里\n",
+    "    )\n",
+    "    .set_global_opts(title_opts=opts.TitleOpts(title = '熬夜原因细分桑基图'))\n",
+    ")\n",
+    "\n",
+    "pic.render('test2.html')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2.1 狗粮流转数据导入"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>品类</th>\n",
+       "      <th>第一次购买</th>\n",
+       "      <th>第二次购买</th>\n",
+       "      <th>人数</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-小规格狗粮</td>\n",
+       "      <td>2-未购买</td>\n",
+       "      <td>654</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-小规格狗粮</td>\n",
+       "      <td>2-磨牙棒</td>\n",
+       "      <td>21</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-小规格狗粮</td>\n",
+       "      <td>2-小规格狗粮</td>\n",
+       "      <td>231</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-小规格狗粮</td>\n",
+       "      <td>2-大规格狗粮</td>\n",
+       "      <td>112</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-大规格狗粮</td>\n",
+       "      <td>2-未购买</td>\n",
+       "      <td>375</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-大规格狗粮</td>\n",
+       "      <td>2-磨牙棒</td>\n",
+       "      <td>23</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-大规格狗粮</td>\n",
+       "      <td>2-小规格狗粮</td>\n",
+       "      <td>18</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-大规格狗粮</td>\n",
+       "      <td>2-大规格狗粮</td>\n",
+       "      <td>197</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>玩具</td>\n",
+       "      <td>1-磨牙棒</td>\n",
+       "      <td>2-未购买</td>\n",
+       "      <td>157</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>玩具</td>\n",
+       "      <td>1-磨牙棒</td>\n",
+       "      <td>2-磨牙棒</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   品类    第一次购买    第二次购买   人数\n",
+       "0  狗粮  1-小规格狗粮    2-未购买  654\n",
+       "1  狗粮  1-小规格狗粮    2-磨牙棒   21\n",
+       "2  狗粮  1-小规格狗粮  2-小规格狗粮  231\n",
+       "3  狗粮  1-小规格狗粮  2-大规格狗粮  112\n",
+       "4  狗粮  1-大规格狗粮    2-未购买  375\n",
+       "5  狗粮  1-大规格狗粮    2-磨牙棒   23\n",
+       "6  狗粮  1-大规格狗粮  2-小规格狗粮   18\n",
+       "7  狗粮  1-大规格狗粮  2-大规格狗粮  197\n",
+       "8  玩具    1-磨牙棒    2-未购买  157\n",
+       "9  玩具    1-磨牙棒    2-磨牙棒    3"
+      ]
+     },
+     "execution_count": 70,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df = pd.read_excel('sankey.xlsx')\n",
+    "df.head(10)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2.2 生成节点"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[{'name': '狗粮'},\n",
+       " {'name': '玩具'},\n",
+       " {'name': '1-小规格狗粮'},\n",
+       " {'name': '1-大规格狗粮'},\n",
+       " {'name': '1-磨牙棒'},\n",
+       " {'name': '2-未购买'},\n",
+       " {'name': '2-磨牙棒'},\n",
+       " {'name': '2-小规格狗粮'},\n",
+       " {'name': '2-大规格狗粮'}]"
+      ]
+     },
+     "execution_count": 72,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "nodes = []\n",
+    "\n",
+    "for i in range(3):\n",
+    "    values = df.iloc[:,i].unique()\n",
+    "    for value in values:\n",
+    "        dic = {}\n",
+    "        dic['name'] = value\n",
+    "        nodes.append(dic)\n",
+    "nodes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2.3 规整数据格式"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>source</th>\n",
+       "      <th>target</th>\n",
+       "      <th>value</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-大规格狗粮</td>\n",
+       "      <td>613</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>狗粮</td>\n",
+       "      <td>1-小规格狗粮</td>\n",
+       "      <td>1018</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>玩具</td>\n",
+       "      <td>1-磨牙棒</td>\n",
+       "      <td>197</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1-小规格狗粮</td>\n",
+       "      <td>2-未购买</td>\n",
+       "      <td>654</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1-小规格狗粮</td>\n",
+       "      <td>2-磨牙棒</td>\n",
+       "      <td>21</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1-小规格狗粮</td>\n",
+       "      <td>2-小规格狗粮</td>\n",
+       "      <td>231</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1-小规格狗粮</td>\n",
+       "      <td>2-大规格狗粮</td>\n",
+       "      <td>112</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1-大规格狗粮</td>\n",
+       "      <td>2-未购买</td>\n",
+       "      <td>375</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>1-大规格狗粮</td>\n",
+       "      <td>2-磨牙棒</td>\n",
+       "      <td>23</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>1-大规格狗粮</td>\n",
+       "      <td>2-小规格狗粮</td>\n",
+       "      <td>18</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    source   target  value\n",
+       "0       狗粮  1-大规格狗粮    613\n",
+       "1       狗粮  1-小规格狗粮   1018\n",
+       "2       玩具    1-磨牙棒    197\n",
+       "0  1-小规格狗粮    2-未购买    654\n",
+       "1  1-小规格狗粮    2-磨牙棒     21\n",
+       "2  1-小规格狗粮  2-小规格狗粮    231\n",
+       "3  1-小规格狗粮  2-大规格狗粮    112\n",
+       "4  1-大规格狗粮    2-未购买    375\n",
+       "5  1-大规格狗粮    2-磨牙棒     23\n",
+       "6  1-大规格狗粮  2-小规格狗粮     18"
+      ]
+     },
+     "execution_count": 73,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "first = df.groupby(['品类','第一次购买'])['人数'].sum().reset_index()\n",
+    "second = df.iloc[:,1:]\n",
+    "first.columns = ['source','target','value']\n",
+    "second.columns = ['source','target','value']\n",
+    "result = pd.concat([first,second])\n",
+    "result.head(10)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2.4 生成linkes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[{'source': '狗粮', 'target': '1-大规格狗粮', 'value': 613},\n",
+       " {'source': '狗粮', 'target': '1-小规格狗粮', 'value': 1018},\n",
+       " {'source': '玩具', 'target': '1-磨牙棒', 'value': 197},\n",
+       " {'source': '1-小规格狗粮', 'target': '2-未购买', 'value': 654},\n",
+       " {'source': '1-小规格狗粮', 'target': '2-磨牙棒', 'value': 21},\n",
+       " {'source': '1-小规格狗粮', 'target': '2-小规格狗粮', 'value': 231},\n",
+       " {'source': '1-小规格狗粮', 'target': '2-大规格狗粮', 'value': 112},\n",
+       " {'source': '1-大规格狗粮', 'target': '2-未购买', 'value': 375},\n",
+       " {'source': '1-大规格狗粮', 'target': '2-磨牙棒', 'value': 23},\n",
+       " {'source': '1-大规格狗粮', 'target': '2-小规格狗粮', 'value': 18},\n",
+       " {'source': '1-大规格狗粮', 'target': '2-大规格狗粮', 'value': 197},\n",
+       " {'source': '1-磨牙棒', 'target': '2-未购买', 'value': 157},\n",
+       " {'source': '1-磨牙棒', 'target': '2-磨牙棒', 'value': 3},\n",
+       " {'source': '1-磨牙棒', 'target': '2-小规格狗粮', 'value': 24},\n",
+       " {'source': '1-磨牙棒', 'target': '2-大规格狗粮', 'value': 13}]"
+      ]
+     },
+     "execution_count": 74,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "linkes = []\n",
+    "\n",
+    "for i in result.values:\n",
+    "    dic = {}\n",
+    "    dic['source'] = i[0]\n",
+    "    dic['target'] = i[1]\n",
+    "    dic['value'] = i[2]\n",
+    "    linkes.append(dic)\n",
+    "\n",
+    "linkes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2.5 绘制客户购买路径流转图"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'C:\\\\Users\\\\Administrator\\\\Desktop\\\\test3.html'"
+      ]
+     },
+     "execution_count": 75,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pic = (\n",
+    "    Sankey()\n",
+    "    .add('',\n",
+    "         nodes,\n",
+    "         linkes,\n",
+    "         linestyle_opt=opts.LineStyleOpts(opacity = 0.3, curve = 0.5, color = 'source'),\n",
+    "         label_opts=opts.LabelOpts(position = 'top'),\n",
+    "         node_gap = 30,\n",
+    "         #orient=\"vertical\",\n",
+    "    )\n",
+    "    .set_global_opts(title_opts=opts.TitleOpts(title = '客户购买路径流转图'))\n",
+    ")\n",
+    "pic.render('test3.html')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
