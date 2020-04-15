@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Time    : 2019/9/26 14:29
-# @Author  : T.M.
-# @File    : tm_01_定时发送生日祝福.py
-# @Software: PyCharm
 
 """
 
