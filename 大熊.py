@@ -1,0 +1,35 @@
+from turtle import*
+import turtle
+speed(0)
+penup()
+seth(180)
+fd(200)
+seth(0)
+penup()
+circle(150,40)
+pendown()
+fillcolor('blue')
+begin_fill()
+circle(150,280)
+end_fill()
+fillcolor('red')
+begin_fill()
+seth(0)
+fd(200)
+circle(-5,90)
+fd(10)
+circle(-5,90)
+fd(210)
+circle(-5,90)
+fd(10)
+circle(-5,90)
+fd(183)
+left(45)
+fillcolor('white')
+begin_fill()
+circle(120,100)
+seth(90)
+a = 2.5
+
+
+ 
