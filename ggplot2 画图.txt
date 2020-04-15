@@ -1,0 +1,57 @@
+rm(list = ls())
+
+
+#读入数据
+data1 = read.csv("C:/Users/TJJYS/Desktop/task2/01 simudata.csv")
+library(ggplot2)
+#柱状图
+data1$教育水平<-factor(data1$教育水平,levels=c(1,2,3,4),labels=c('高中及以下','大专或本科','硕士研究生','博士研究生及以上'))
+table1=as.data.frame(table(data1$教育水平))
+table1$教育水平=table1$Var1
+
+ggplot(table1,aes(x=教育水平,y=Freq,fill=教育水平)) + 
+  geom_bar(stat = "identity")+
+  scale_y_continuous(name='人数', limit=c(0,400)) 
+
+
+data1$英语水平=factor(data1$英语水平,levels=c(1,2,3,4),labels=c('四级以下','四级','六级','六级以上'))
+table2=as.data.frame(table(data1$英语水平))
+table2$英语水平=table2$Var1
+ggplot(table2,aes(x=英语水平,y=Freq,fill=英语水平)) + 
+  geom_bar(stat = "identity")+
+  scale_y_continuous(name='人数', limit=c(0,400)) 
+#直方图
+install.packages('gcookbook')
+library(ggplot2)
+library(gcookbook) 
+ggplot(data1, aes(x=收入)) + geom_bar(stat="bin",fill="lightblue",colour="black")+
+  xlab("收入   单位：元")+
+  scale_y_continuous(name='人数', limit=c(0,160)) 
+
+ggplot(data1, aes(x=微博好友数)) + geom_bar(stat="bin",fill="yellow",colour="black")+
+  xlab("微博好友数   单位：人")+
+  scale_y_continuous(name='人数', limit=c(0,160)) 
+
+ggplot(data1, aes(x=消费理念)) + geom_bar(stat="bin",fill="red",colour="black")+
+  xlab("消费理念（消费理念=信用卡消费/总消费）")+
+  scale_y_continuous(name='频数', limit=c(0,75)) 
+
+#箱线图
+data1$是否按期还款=factor(data1$是否按期还款,levels=c(0,1),labels=c('坏人','好人'))
+
+ggplot(data=data1, aes(x=data1$是否按期还款,y=data1$收入))+geom_boxplot(aes(fill=是否按期还款),fill=c("green","blue"), colour="black")+
+  xlab("是否按时还款 （按时：好人  不按时：坏人)")+
+  scale_y_continuous(name='收入', limit=c(0,122000)) 
+
+
+ggplot(data=data1, aes(x=data1$是否按期还款,y=data1$微博好友数))+geom_boxplot(aes(fill=是否按期还款),fill=c("green","blue"), colour="black")+
+  xlab("是否按时还款 （按时：好人  不按时：坏人)")+
+  scale_y_continuous(name='微博好友数', limit=c(0,150)) 
+
+ggplot(data=data1, aes(x=data1$是否按期还款,y=data1$消费理念))+geom_boxplot(aes(fill=是否按期还款),fill=c("green","blue"), colour="black")+
+  xlab("是否按时还款 （按时：好人  不按时：坏人)")+
+  scale_y_continuous(name='消费理念', limit=c(0,1)) 
+
+ggplot(data=data1, aes(x=data1$是否按期还款,y=data1$教育水平))+geom_boxplot(aes(fill=是否按期还款),fill=c("green","blue"), colour="black")+
+  xlab("是否按时还款 （按时：好人  不按时：坏人)")+
+  scale_y_continuous(name='教育水平', limit=c(0,5)) 
